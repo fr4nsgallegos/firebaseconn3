@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -72,8 +73,23 @@ class ExportacionesPage extends StatelessWidget {
   exportExcel() async {
     final workbook = excel.Workbook();
     final excel.Worksheet sheet = workbook.worksheets[0];
-    sheet.getRangeByName("A1").setText("HOLAAAAAAAA");
-    sheet.getRangeByIndex(2, 1).setText("HOLA 2");
+    sheet.getRangeByName("A1").setText("Nombre");
+    sheet.getRangeByIndex(1, 2).setText("Apellido");
+    sheet.getRangeByIndex(1, 3).setText("Edad");
+    CollectionReference userReference =
+        FirebaseFirestore.instance.collection("users");
+    QuerySnapshot userCollection = await userReference.get();
+
+    List<QueryDocumentSnapshot> docs = userCollection.docs;
+
+    int row = 2;
+
+    List.generate(docs.length, (index) {
+      sheet.getRangeByIndex(row, 1).setText(docs[index]["name"]);
+      sheet.getRangeByIndex(row, 2).setText(docs[index]["lastName"]);
+      sheet.getRangeByIndex(row, 3).setText(docs[index]["age"].toString());
+      row++;
+    });
 
     final List<int> bytes = workbook.saveAsStream();
     workbook.dispose();
