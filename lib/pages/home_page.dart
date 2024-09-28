@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          ApiServices().getPokemonInfo();
+          ApiServices().postProductFakeApi();
         },
       ),
       appBar: AppBar(),
