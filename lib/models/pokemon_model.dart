@@ -23,8 +23,8 @@ class PokemonModel {
   });
 
   factory PokemonModel.fromJson(Map<String, dynamic> json) => PokemonModel(
-        count: json["count"],
-        next: json["next"],
+        count: json["count"] ?? 0,
+        next: json["next"] ?? "",
         previous: json["previous"],
         results:
             List<Result>.from(json["results"].map((x) => Result.fromJson(x))),
