@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebaseconn3/pages/exportaciones_page.dart';
+import 'package:firebaseconn3/pages/graficos_page.dart';
 import 'package:firebaseconn3/pages/home_page.dart';
 import 'package:firebaseconn3/pages/login_create_page.dart';
 import 'package:firebaseconn3/utils/notification_service.dart';
@@ -16,7 +17,7 @@ void main() async {
 
   runApp(
     MaterialApp(
-      home: ExportacionesPage(),
+      home: GraficosPage(),
     ),
   );
 }
