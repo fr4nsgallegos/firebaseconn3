@@ -4,13 +4,14 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
 
 class ExportacionesPage extends StatelessWidget {
-  exportPDF() async {
+  Future exportPDF() async {
     final pdf = pw.Document();
 
     pdf.addPage(
@@ -70,7 +71,7 @@ class ExportacionesPage extends StatelessWidget {
     OpenFile.open(fileName);
   }
 
-  exportExcel() async {
+  Future exportExcel() async {
     final workbook = excel.Workbook();
     final excel.Worksheet sheet = workbook.worksheets[0];
     sheet.getRangeByName("A1").setText("Nombre");
@@ -102,6 +103,49 @@ class ExportacionesPage extends StatelessWidget {
     OpenFile.open(fileName);
   }
 
+  Future exportExcelCharts() async {
+    excel.Workbook workbook = excel.Workbook();
+    excel.Worksheet sheet1 = workbook.worksheets.addWithName("CHART");
+
+    //ENCABEZADO DE LA TABLA
+    sheet1.enableSheetCalculations();
+    sheet1.getRangeByName("A1").setText("id");
+    sheet1.getRangeByIndex(1, 2).setText("Partido político");
+    sheet1.getRangeByIndex(1, 3).setText("Representante");
+    sheet1.getRangeByIndex(1, 4).setText("Votos");
+
+    //Estilos
+    sheet1.getRangeByIndex(1, 1).columnWidth = 15;
+    sheet1.getRangeByIndex(1, 2).columnWidth = 20;
+    sheet1.getRangeByIndex(1, 3).columnWidth = 25;
+    sheet1.getRangeByIndex(1, 4).columnWidth = 10;
+
+    sheet1.getRangeByName('A1:A18').rowHeight = 22;
+
+    final excel.Style style1 = workbook.styles.add("Style1");
+    style1.backColor = '#4CC2FF';
+    style1.vAlign = excel.VAlignType.center;
+    style1.hAlign = excel.HAlignType.center;
+    style1.bold = true;
+
+    final excel.Style style2 = workbook.styles.add("Style2");
+    style2.vAlign = excel.VAlignType.center;
+    style2.bold = true;
+
+    sheet1.getRangeByName('A1:D1').cellStyle = style1;
+
+    //GUARDAR  ARCHIVO
+    final List<int> bytes = workbook.saveAsStream();
+    workbook.dispose();
+
+    String path = (await getApplicationSupportDirectory()).path;
+    String fileName = '$path/excelChart.xlsx';
+
+    File file = File(fileName);
+    await file.writeAsBytes(bytes, flush: true);
+    OpenFile.open(fileName);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -121,6 +165,12 @@ class ExportacionesPage extends StatelessWidget {
                   exportExcel();
                 },
                 child: Text("Exportar a excel"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  exportExcelCharts();
+                },
+                child: Text("Exportar a excel con gráficos"),
               ),
             ],
           ),
