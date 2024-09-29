@@ -129,6 +129,34 @@ class _GraficosPageState extends State<GraficosPage> {
     return imagen;
   }
 
+  Widget _graph3() {
+    return PieChart(
+      swapAnimationCurve: Curves.easeInOut,
+      swapAnimationDuration: Duration(seconds: 2),
+      PieChartData(
+        sectionsSpace: 2,
+        centerSpaceRadius: 60,
+        sections: [
+          PieChartSectionData(
+            value: 100,
+            color: Colors.red,
+          ),
+          PieChartSectionData(
+            value: 25,
+            color: Colors.cyan,
+            showTitle: true,
+            title: "aprobados",
+            titlePositionPercentageOffset: 1.2,
+          ),
+          PieChartSectionData(
+            value: 100,
+            color: Colors.yellow,
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -140,7 +168,7 @@ class _GraficosPageState extends State<GraficosPage> {
                 Text("GRÁFICO 1"),
                 Container(
                   height: 300,
-                  child: _graph1(),
+                  child: _graph3(),
                 ),
                 Divider(),
                 Text("GRÁFICO 2"),
@@ -169,6 +197,13 @@ class _GraficosPageState extends State<GraficosPage> {
                         ),
                       )
                     : Container(),
+                Divider(),
+                Text("GRÁFICO 3"),
+                Container(
+                  height: 300,
+                  margin: EdgeInsets.symmetric(vertical: 50),
+                  child: _graph3(),
+                ),
               ],
             ),
           ),
