@@ -9,8 +9,36 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
+import 'package:syncfusion_officechart/officechart.dart';
 
 class ExportacionesPage extends StatelessWidget {
+  List<Map<String, dynamic>> partidosList = [
+    {
+      "id": "1234654",
+      "partido": "Peru juntos",
+      "representante": "Jhonny Gallegos",
+      "votos": 10,
+    },
+    {
+      "id": "9687984s",
+      "partido": "Peru",
+      "representante": "Matias Mengoa",
+      "votos": 20,
+    },
+    {
+      "id": "89751",
+      "partido": "Paz Peru",
+      "representante": "Lia Rivas",
+      "votos": 50,
+    },
+    {
+      "id": "9879163a",
+      "partido": "Partido Peru",
+      "representante": "Luahana Martinez",
+      "votos": 98,
+    }
+  ];
+
   Future exportPDF() async {
     final pdf = pw.Document();
 
@@ -132,7 +160,29 @@ class ExportacionesPage extends StatelessWidget {
     style2.vAlign = excel.VAlignType.center;
     style2.bold = true;
 
+    int row = 2;
+
     sheet1.getRangeByName('A1:D1').cellStyle = style1;
+    partidosList.forEach((element) {
+      sheet1.getRangeByIndex(row, 1).setText(element["id"]);
+      sheet1.getRangeByIndex(row, 2).setText(element["partido"]);
+      sheet1.getRangeByIndex(row, 3).setText(element["representante"]);
+      sheet1.getRangeByIndex(row, 4).setNumber(element["votos"].toDouble());
+      row++;
+    });
+
+    sheet1.getRangeByIndex(row, 3).setText("TOTAL");
+    sheet1.getRangeByIndex(row, 4).setFormula('=SUM(D2:D${row - 1})');
+
+    //CREAR GRÁFICO
+    final ChartCollection chartCollection = ChartCollection(sheet1);
+
+    final Chart chart = chartCollection.add();
+    chart.chartType = ExcelChartType.pie;
+    chart.dataRange = sheet1.getRangeByName('C2:D${row - 1}');
+    chart.isSeriesInRows = false;
+    chart.chartTitle = "RESUMEN DE VOTOS";
+    sheet1.charts = chartCollection;
 
     //GUARDAR  ARCHIVO
     final List<int> bytes = workbook.saveAsStream();
